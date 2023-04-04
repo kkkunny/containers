@@ -29,3 +29,14 @@ func (hm *HashMap[K, V]) ContainKey(k K) bool {
 	_, ok := hm.data[k]
 	return ok
 }
+func (hm *HashMap[K, V]) Remove(k K, v ...V) V {
+	val, ok := hm.data[k]
+	if !ok{
+		if len(v) != 0{
+			return v[len(v)-1]
+		}
+		return val
+	}
+	delete(hm.data, k)
+	return val
+}
