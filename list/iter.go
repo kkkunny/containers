@@ -38,3 +38,14 @@ func (i *ListIter[T]) Next() {
 	}
 	i.elem = i.elem.Next()
 }
+
+func ListMap[From, To any](l *List[From], fn func(v From)To)*List[To]{
+	nl := NewList[To]()
+	for iter:=l.Begin(); iter != nil; iter.Next() {
+		nl.PushBack(fn(iter.Value()))
+		if !iter.HasNext(){
+			break
+		}
+	}
+	return nl
+}

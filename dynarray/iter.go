@@ -48,3 +48,14 @@ func (i *DynArrayIter[T]) Next() {
 	}
 	i.index++
 }
+
+func DynArrayMap[From, To any](da *DynArray[From], fn func(i uint, v From)To)*DynArray[To]{
+	newDa := NewDynArrayWith[To](da.Length(), da.Capacity())
+	for iter:=da.Begin(); iter != nil; iter.Next() {
+		newDa.Set(iter.Index(), fn(iter.Index(), iter.Value()))
+		if !iter.HasNext(){
+			break
+		}
+	}
+	return newDa
+}
