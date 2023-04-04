@@ -34,6 +34,7 @@ func NewList[T any]() *List[T] {
 	l.root.next = l.root
 	return l
 }
+
 func (l *List[T]) Length() uint {
 	return l.len
 }

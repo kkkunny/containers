@@ -10,6 +10,7 @@ func NewDynArray[T any]() *DynArray[T] {
 func NewDynArrayWith[T any](len, cap uint) *DynArray[T] {
 	return &DynArray[T]{data: make([]T, len, cap)}
 }
+
 func (da *DynArray[T]) checkIndex(i uint) {
 	if i > uint(len(da.data)) {
 		panic("index out of range")
