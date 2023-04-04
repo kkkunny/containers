@@ -3,10 +3,7 @@ package iter
 type Iter[T any] interface {
 	Value() T
 	HasPrev() bool
+	Prev()
 	HasNext() bool
-}
-
-type IndexIter[T any] interface {
-	Iter[T]
-	Index() uint
+	Next()
 }

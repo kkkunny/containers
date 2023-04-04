@@ -23,18 +23,18 @@ func (i *ListIter[T]) Value() T {
 func (i *ListIter[T]) HasPrev() bool {
 	return i.elem.Prev() != nil
 }
-func (i *ListIter[T]) Prev() *ListIter[T] {
+func (i *ListIter[T]) Prev() {
 	if !i.HasPrev() {
-		return nil
+		panic("index out of range")
 	}
-	return &ListIter[T]{elem: i.elem.Prev()}
+	i.elem = i.elem.Prev()
 }
 func (i *ListIter[T]) HasNext() bool {
 	return i.elem.Next() != nil
 }
-func (i *ListIter[T]) Next() *ListIter[T] {
+func (i *ListIter[T]) Next() {
 	if !i.HasNext() {
-		return nil
+		panic("index out of range")
 	}
-	return &ListIter[T]{elem: i.elem.Next()}
+	i.elem = i.elem.Next()
 }

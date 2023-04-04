@@ -33,24 +33,18 @@ func (i *DynArrayIter[T]) Value() T {
 func (i *DynArrayIter[T]) HasPrev() bool {
 	return i.index != 0
 }
-func (i *DynArrayIter[T]) Prev() *DynArrayIter[T] {
+func (i *DynArrayIter[T]) Prev() {
 	if !i.HasPrev() {
-		return nil
+		panic("index out of range")
 	}
-	return &DynArrayIter[T]{
-		da:    i.da,
-		index: i.index - 1,
-	}
+	i.index--
 }
 func (i *DynArrayIter[T]) HasNext() bool {
 	return i.index != uint(len(i.da.data))-1
 }
-func (i *DynArrayIter[T]) Next() *DynArrayIter[T] {
+func (i *DynArrayIter[T]) Next() {
 	if !i.HasNext() {
-		return nil
+		panic("index out of range")
 	}
-	return &DynArrayIter[T]{
-		da:    i.da,
-		index: i.index + 1,
-	}
+	i.index++
 }

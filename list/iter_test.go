@@ -8,10 +8,13 @@ func TestList_Iter(t *testing.T) {
 		l.PushBack(i)
 	}
 	var i int
-	for iter := l.Begin(); iter != nil; iter = iter.Next() {
+	for iter := l.Begin(); iter != nil; iter.Next() {
 		if i != iter.Value() {
 			t.FailNow()
 		}
 		i++
+		if !iter.HasNext(){
+			break
+		}
 	}
 }
