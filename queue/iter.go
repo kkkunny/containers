@@ -6,13 +6,7 @@ type QueueIter[T any] struct {
 	iter *list.ListIter[T]
 }
 
-func (q *Queue[T]) Begin() *QueueIter[T] {
-	if q.Length() == 0 {
-		return nil
-	}
-	return &QueueIter[T]{iter: q.data.Begin()}
-}
-func (q *Queue[T]) End() *QueueIter[T] {
+func (q *Queue[T]) Iterator() *QueueIter[T] {
 	if q.Length() == 0 {
 		return nil
 	}
@@ -31,7 +25,7 @@ func (i *QueueIter[T]) Next() {
 
 func QueueMap[From, To any](q *Queue[From], fn func(v From) To) *Queue[To] {
 	nq := NewQueue[To]()
-	for iter := q.Begin(); iter != nil; iter.Next() {
+	for iter := q.Iterator(); iter != nil; iter.Next() {
 		nq.Push(fn(iter.Value()))
 		if !iter.HasNext() {
 			break

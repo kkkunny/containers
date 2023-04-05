@@ -8,7 +8,7 @@ func TestQueue_Iter(t *testing.T) {
 		q.Push(i)
 	}
 	var i int
-	for iter := q.Begin(); iter != nil; iter.Next() {
+	for iter := q.Iterator(); iter != nil; iter.Next() {
 		if i != iter.Value() {
 			t.FailNow()
 		}
@@ -28,7 +28,7 @@ func TestQueue_Map(t *testing.T) {
 		return v + 1
 	})
 	var i int
-	for iter := nq.Begin(); iter != nil; iter.Next() {
+	for iter := nq.Iterator(); iter != nil; iter.Next() {
 		if i != iter.Value()-1 {
 			t.FailNow()
 		}

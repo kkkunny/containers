@@ -1,14 +1,14 @@
-package queue
+package stack
 
 import (
 	"fmt"
 	"strings"
 )
 
-func (q *Queue[T]) String() string {
+func (s *Stack[T]) String() string {
 	var buf strings.Builder
 	buf.WriteByte('[')
-	for iter := q.Iterator(); iter != nil; iter.Next() {
+	for iter := s.data.Begin(); iter != nil; iter.Next() {
 		buf.WriteString(fmt.Sprintf("%v", iter.Value()))
 		if iter.HasNext() {
 			buf.WriteString(", ")
