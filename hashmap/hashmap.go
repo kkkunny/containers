@@ -40,3 +40,6 @@ func (hm *HashMap[K, V]) Remove(k K, v ...V) V {
 	delete(hm.data, k)
 	return val
 }
+func (hm *HashMap[K, V]) Clear(){
+	hm.data = make(map[K]V, 0)
+}

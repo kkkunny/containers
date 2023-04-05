@@ -71,3 +71,6 @@ func (da *DynArray[T]) Remove(i uint) T {
 
 	return v
 }
+func (da *DynArray[T]) Clear(){
+	da.data = make([]T, 0, 0)
+}

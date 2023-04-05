@@ -110,3 +110,8 @@ func (l *List[T]) Back() *Elem[T] {
 	}
 	return l.root.prev
 }
+func (l *List[T]) Clear() {
+	l.root.next = l.root
+	l.root.prev = l.root
+	l.len = 0
+}
