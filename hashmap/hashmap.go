@@ -47,16 +47,15 @@ func NewHashMapWithHasher[K, V any](hasher func(K) uint64) *HashMap[K, V] {
 }
 func NewHashMapWith[K, V any](cap uint, hasher func(K) uint64) *HashMap[K, V] {
 	hm := &HashMap[K, V]{hasher: hasher}
-	hm.init(cap)
+	hm.initData(cap)
 	return hm
 }
 
-func (hm *HashMap[K, V]) init(cap uint) {
+func (hm *HashMap[K, V]) initData(cap uint) {
 	hm.data = make([]*list.List[*node[K, V]], cap)
 	for i := range hm.data {
 		hm.data[i] = list.NewList[*node[K, V]]()
 	}
-	hm.len = 0
 }
 func (hm *HashMap[K, V]) hash(k K) uint64 {
 	return hm.hasher(k)
@@ -66,15 +65,12 @@ func (hm *HashMap[K, V]) index(hash uint64) uint {
 }
 func (hm *HashMap[K, V]) expan() {
 	oldData := hm.data
-	hm.init(uint(len(oldData)) * 2)
-
+	hm.initData(uint(len(oldData)) * 2)
 	for _, l := range oldData {
-		for iter := l.Begin(); iter != nil; iter.Next() {
-			value := iter.Value()
-			hm.Set(value.key, value.value)
-			if !iter.HasNext() {
-				break
-			}
+		for node := l.Front(); node != nil; node = node.Next() {
+			value := node.Value()
+			hm.insertNewData(value.key, value.value)
+			hm.len--
 		}
 	}
 }
@@ -99,12 +95,23 @@ func (hm *HashMap[K, V]) find(hash uint64, k K) (*list.List[*node[K, V]], *list.
 	}
 	return l, nil
 }
+func (hm *HashMap[K, V]) insertNewData(k K, v V) bool {
+	hash := hm.hash(k)
+	l, _ := hm.find(hash, k)
+	l.PushBack(&node[K, V]{
+		hash:  hash,
+		key:   k,
+		value: v,
+	})
+	hm.len++
+	return false
+}
 func (hm *HashMap[K, V]) Set(k K, v V) bool {
 	hm.checkExpan()
 
 	hash := hm.hash(k)
-	l, n := hm.find(hash, k)
 
+	l, n := hm.find(hash, k)
 	if n != nil {
 		n.Value().value = v
 		return true
@@ -120,15 +127,18 @@ func (hm *HashMap[K, V]) Set(k K, v V) bool {
 }
 func (hm *HashMap[K, V]) Get(k K, v ...V) (V, bool) {
 	hash := hm.hash(k)
-	_, n := hm.find(hash, k)
 
-	if n == nil && len(v) > 0 {
-		return v[len(v)-1], false
-	} else if n == nil {
-		var val V
-		return val, false
+	_, n := hm.find(hash, k)
+	if n != nil {
+		return n.Value().value, true
 	}
-	return n.Value().value, true
+
+	if len(v) > 0 {
+		return v[len(v)-1], false
+	}
+
+	var val V
+	return val, false
 }
 func (hm *HashMap[K, V]) ContainKey(k K) bool {
 	hash := hm.hash(k)
@@ -137,19 +147,23 @@ func (hm *HashMap[K, V]) ContainKey(k K) bool {
 }
 func (hm *HashMap[K, V]) Remove(k K, v ...V) (V, bool) {
 	hash := hm.hash(k)
-	l, n := hm.find(hash, k)
 
-	if n == nil && len(v) > 0 {
-		return v[len(v)-1], false
-	} else if n == nil {
-		var val V
-		return val, false
+	l, n := hm.find(hash, k)
+	if n != nil {
+		hm.len--
+		return l.RemoveNode(n).Value().value, true
 	}
-	hm.len--
-	return l.RemoveNode(n).Value().value, true
+
+	if len(v) > 0 {
+		return v[len(v)-1], false
+	}
+
+	var val V
+	return val, false
 }
 func (hm *HashMap[K, V]) Clear() {
-	hm.init(defaultInitCapacity)
+	hm.initData(defaultInitCapacity)
+	hm.len = 0
 }
 func (hm *HashMap[K, V]) Keys() []K {
 	if hm.len == 0 {

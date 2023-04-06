@@ -5,14 +5,14 @@ import (
 )
 
 func TestNewHashMap(t *testing.T) {
-	hm := NewHashMapWithCapacity[string, int](10)
+	hm := NewHashMap[string, int]()
 	if hm.Length() != 0 {
 		t.FailNow()
 	}
 }
 
 func TestHashMap(t *testing.T) {
-	hm := NewHashMapWithCapacity[int, int](10)
+	hm := NewHashMap[int, int]()
 	for i := 0; i < 15; i++ {
 		hm.Set(i, i)
 	}
