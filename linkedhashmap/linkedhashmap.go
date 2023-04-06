@@ -11,19 +11,19 @@ type linkedHashMapElem[K comparable, V any] struct {
 }
 
 type LinkedHashMap[K comparable, V any] struct {
-	hash *hashmap.HashMap[K, *list.Elem[linkedHashMapElem[K, V]]]
+	hash *hashmap.HashMap[K, *list.ListNode[linkedHashMapElem[K, V]]]
 	data *list.List[linkedHashMapElem[K, V]]
 }
 
 func NewLinkedHashMap[K comparable, V any]() *LinkedHashMap[K, V] {
 	return &LinkedHashMap[K, V]{
-		hash: hashmap.NewHashMap[K, *list.Elem[linkedHashMapElem[K, V]]](),
+		hash: hashmap.NewHashMap[K, *list.ListNode[linkedHashMapElem[K, V]]](),
 		data: list.NewList[linkedHashMapElem[K, V]](),
 	}
 }
 func NewLinkedHashMapWith[K comparable, V any](cap uint) *LinkedHashMap[K, V] {
 	return &LinkedHashMap[K, V]{
-		hash: hashmap.NewHashMapWith[K, *list.Elem[linkedHashMapElem[K, V]]](cap),
+		hash: hashmap.NewHashMapWith[K, *list.ListNode[linkedHashMapElem[K, V]]](cap),
 		data: list.NewList[linkedHashMapElem[K, V]](),
 	}
 }

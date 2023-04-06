@@ -1,7 +1,7 @@
 package list
 
 type ListIter[T any] struct {
-	elem *Elem[T]
+	elem *ListNode[T]
 }
 
 func (l *List[T]) Begin() *ListIter[T] {
@@ -39,11 +39,11 @@ func (i *ListIter[T]) Next() {
 	i.elem = i.elem.Next()
 }
 
-func ListMap[From, To any](l *List[From], fn func(v From)To)*List[To]{
+func ListMap[From, To any](l *List[From], fn func(v From) To) *List[To] {
 	nl := NewList[To]()
-	for iter:=l.Begin(); iter != nil; iter.Next() {
+	for iter := l.Begin(); iter != nil; iter.Next() {
 		nl.PushBack(fn(iter.Value()))
-		if !iter.HasNext(){
+		if !iter.HasNext() {
 			break
 		}
 	}

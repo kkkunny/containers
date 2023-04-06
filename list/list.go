@@ -1,35 +1,35 @@
 package list
 
-type Elem[T any] struct {
-	prev, next *Elem[T]
-	val        T
+type ListNode[T any] struct {
+	prev, next *ListNode[T]
 	list       *List[T]
+	val        T
 }
 
-func (e *Elem[T]) Prev() *Elem[T] {
-	if e.prev == e.list.root {
+func (n *ListNode[T]) Prev() *ListNode[T] {
+	if n.prev == n.list.root {
 		return nil
 	}
-	return e.prev
+	return n.prev
 }
-func (e *Elem[T]) Next() *Elem[T] {
-	if e.next == e.list.root {
+func (n *ListNode[T]) Next() *ListNode[T] {
+	if n.next == n.list.root {
 		return nil
 	}
-	return e.next
+	return n.next
 }
-func (e *Elem[T]) Value() T {
-	return e.val
+func (n *ListNode[T]) Value() T {
+	return n.val
 }
 
 type List[T any] struct {
-	root *Elem[T]
+	root *ListNode[T]
 	len  uint
 }
 
 func NewList[T any]() *List[T] {
 	l := new(List[T])
-	l.root = &Elem[T]{list: l}
+	l.root = &ListNode[T]{list: l}
 	l.root.prev = l.root
 	l.root.next = l.root
 	return l
@@ -38,12 +38,12 @@ func NewList[T any]() *List[T] {
 func (l *List[T]) Length() uint {
 	return l.len
 }
-func (l *List[T]) checkElem(e *Elem[T]) {
+func (l *List[T]) checkElem(e *ListNode[T]) {
 	if e.list != l {
 		panic("the element is not in this list")
 	}
 }
-func (l *List[T]) RemoveElem(e *Elem[T]) *Elem[T] {
+func (l *List[T]) RemoveElem(e *ListNode[T]) *ListNode[T] {
 	l.checkElem(e)
 	e.list = nil
 	if e.prev != nil {
@@ -55,7 +55,7 @@ func (l *List[T]) RemoveElem(e *Elem[T]) *Elem[T] {
 	l.len--
 	return e
 }
-func (l *List[T]) MoveToFrontOfElem(elem, target *Elem[T]) *Elem[T] {
+func (l *List[T]) MoveToFrontOfElem(elem, target *ListNode[T]) *ListNode[T] {
 	l.checkElem(elem)
 	l.checkElem(target)
 
@@ -70,7 +70,7 @@ func (l *List[T]) MoveToFrontOfElem(elem, target *Elem[T]) *Elem[T] {
 	elem.next = target
 	return elem
 }
-func (l *List[T]) MoveToBackOfElem(elem, target *Elem[T]) *Elem[T] {
+func (l *List[T]) MoveToBackOfElem(elem, target *ListNode[T]) *ListNode[T] {
 	l.checkElem(elem)
 	l.checkElem(target)
 
@@ -85,29 +85,29 @@ func (l *List[T]) MoveToBackOfElem(elem, target *Elem[T]) *Elem[T] {
 	elem.prev = target
 	return elem
 }
-func (l *List[T]) MoveToFront(e *Elem[T]) *Elem[T] {
+func (l *List[T]) MoveToFront(e *ListNode[T]) *ListNode[T] {
 	return l.MoveToBackOfElem(e, l.root)
 }
-func (l *List[T]) MoveToBack(e *Elem[T]) *Elem[T] {
+func (l *List[T]) MoveToBack(e *ListNode[T]) *ListNode[T] {
 	return l.MoveToFrontOfElem(e, l.root)
 }
-func (l *List[T]) PushFront(v T) *Elem[T] {
+func (l *List[T]) PushFront(v T) *ListNode[T] {
 	l.len++
-	elem := &Elem[T]{val: v, list: l}
+	elem := &ListNode[T]{val: v, list: l}
 	return l.MoveToFront(elem)
 }
-func (l *List[T]) PushBack(v T) *Elem[T] {
+func (l *List[T]) PushBack(v T) *ListNode[T] {
 	l.len++
-	elem := &Elem[T]{val: v, list: l}
+	elem := &ListNode[T]{val: v, list: l}
 	return l.MoveToBack(elem)
 }
-func (l *List[T]) Front() *Elem[T] {
+func (l *List[T]) Front() *ListNode[T] {
 	if l.len == 0 {
 		return nil
 	}
 	return l.root.next
 }
-func (l *List[T]) Back() *Elem[T] {
+func (l *List[T]) Back() *ListNode[T] {
 	if l.len == 0 {
 		return nil
 	}
