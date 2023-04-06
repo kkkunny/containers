@@ -3,7 +3,7 @@ package linkedhashmap
 import "github.com/kkkunny/containers/list"
 
 type LinkedHashMapIter[K any, V any] struct {
-	iter *list.ListIter[linkedHashMapElem[K, V]]
+	iter *list.ListIter[elem[K, V]]
 }
 
 func (lhm *LinkedHashMap[K, V]) Begin() *LinkedHashMapIter[K, V] {

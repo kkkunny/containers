@@ -13,13 +13,13 @@ func TestNewHashMap(t *testing.T) {
 
 func TestHashMap(t *testing.T) {
 	hm := NewHashMapWithCapacity[int, int](10)
-	for i := 0; i < 10; i++ {
+	for i := 0; i < 15; i++ {
 		hm.Set(i, i)
 	}
-	if hm.Length() != 10 {
+	if hm.Length() != 15 {
 		t.FailNow()
 	}
-	if v, ok := hm.Get(11, 12); ok || v != 12 {
+	if v, ok := hm.Get(16, 12); ok || v != 12 {
 		t.FailNow()
 	}
 	if v, ok := hm.Get(0, 13); !ok || v != 0 {

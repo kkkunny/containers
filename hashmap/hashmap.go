@@ -10,7 +10,8 @@ import (
 )
 
 const (
-	defaultInitCapacity uint = 16
+	defaultInitCapacity uint    = 16
+	defaultLoadFactor   float64 = 0.75
 )
 
 type node[K, V any] struct {
@@ -55,6 +56,7 @@ func (hm *HashMap[K, V]) init(cap uint) {
 	for i := range hm.data {
 		hm.data[i] = list.NewList[*node[K, V]]()
 	}
+	hm.len = 0
 }
 func (hm *HashMap[K, V]) hash(k K) uint64 {
 	return hm.hasher(k)
@@ -62,8 +64,31 @@ func (hm *HashMap[K, V]) hash(k K) uint64 {
 func (hm *HashMap[K, V]) index(hash uint64) uint {
 	return uint(hash & uint64(len(hm.data)-1))
 }
+func (hm *HashMap[K, V]) expan() {
+	oldData := hm.data
+	hm.init(uint(len(oldData)) * 2)
+
+	for _, l := range oldData {
+		for iter := l.Begin(); iter != nil; iter.Next() {
+			value := iter.Value()
+			hm.Set(value.key, value.value)
+			if !iter.HasNext() {
+				break
+			}
+		}
+	}
+}
+func (hm *HashMap[K, V]) checkExpan() {
+	if float64(hm.len)/float64(len(hm.data)) < defaultLoadFactor {
+		return
+	}
+	hm.expan()
+}
 func (hm *HashMap[K, V]) Length() uint {
 	return hm.len
+}
+func (hm *HashMap[K, V]) Capacity() uint {
+	return uint(len(hm.data))
 }
 func (hm *HashMap[K, V]) find(hash uint64, k K) (*list.List[*node[K, V]], *list.ListNode[*node[K, V]]) {
 	l := hm.data[hm.index(hash)]
@@ -75,6 +100,8 @@ func (hm *HashMap[K, V]) find(hash uint64, k K) (*list.List[*node[K, V]], *list.
 	return l, nil
 }
 func (hm *HashMap[K, V]) Set(k K, v V) bool {
+	hm.checkExpan()
+
 	hash := hm.hash(k)
 	l, n := hm.find(hash, k)
 

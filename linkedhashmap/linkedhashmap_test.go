@@ -17,10 +17,10 @@ func TestLinkedHashMap(t *testing.T) {
 	if hm.Length() != 10 {
 		t.FailNow()
 	}
-	if hm.Get(11, 12) != 12 {
+	if v, ok := hm.Get(11, 12); ok || v != 12 {
 		t.FailNow()
 	}
-	if hm.Get(0, 13) != 0 {
+	if v, ok := hm.Get(0, 13); !ok || v != 0 {
 		t.FailNow()
 	}
 	if !hm.ContainKey(1) {
