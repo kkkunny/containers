@@ -9,12 +9,14 @@ func (hm *HashMap[K, V]) String() string {
 	var buf strings.Builder
 	buf.WriteByte('{')
 	var i int
-	for k, v := range hm.data {
-		buf.WriteString(fmt.Sprintf("%v", k))
+	for iter := hm.Iterator(); iter != nil; iter.Next() {
+		buf.WriteString(fmt.Sprintf("%v", iter.Key()))
 		buf.WriteString(": ")
-		buf.WriteString(fmt.Sprintf("%v", v))
-		if i < len(hm.data)-1 {
+		buf.WriteString(fmt.Sprintf("%v", iter.Value()))
+		if iter.HasNext() {
 			buf.WriteString(", ")
+		} else {
+			break
 		}
 		i++
 	}

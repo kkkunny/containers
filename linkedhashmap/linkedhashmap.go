@@ -5,12 +5,12 @@ import (
 	"github.com/kkkunny/containers/list"
 )
 
-type linkedHashMapElem[K comparable, V any] struct {
+type linkedHashMapElem[K any, V any] struct {
 	key   K
 	value V
 }
 
-type LinkedHashMap[K comparable, V any] struct {
+type LinkedHashMap[K any, V any] struct {
 	hash *hashmap.HashMap[K, *list.ListNode[linkedHashMapElem[K, V]]]
 	data *list.List[linkedHashMapElem[K, V]]
 }
@@ -21,9 +21,21 @@ func NewLinkedHashMap[K comparable, V any]() *LinkedHashMap[K, V] {
 		data: list.NewList[linkedHashMapElem[K, V]](),
 	}
 }
-func NewLinkedHashMapWith[K comparable, V any](cap uint) *LinkedHashMap[K, V] {
+func NewLinkedHashMapWithCapacity[K comparable, V any](cap uint) *LinkedHashMap[K, V] {
 	return &LinkedHashMap[K, V]{
-		hash: hashmap.NewHashMapWith[K, *list.ListNode[linkedHashMapElem[K, V]]](cap),
+		hash: hashmap.NewHashMapWithCapacity[K, *list.ListNode[linkedHashMapElem[K, V]]](cap),
+		data: list.NewList[linkedHashMapElem[K, V]](),
+	}
+}
+func NewLinkedHashMapWithHasher[K any, V any](hasher func(K) uint64) *LinkedHashMap[K, V] {
+	return &LinkedHashMap[K, V]{
+		hash: hashmap.NewHashMapWithHasher[K, *list.ListNode[linkedHashMapElem[K, V]]](hasher),
+		data: list.NewList[linkedHashMapElem[K, V]](),
+	}
+}
+func NewLinkedHashMapWith[K any, V any](cap uint, hasher func(K) uint64) *LinkedHashMap[K, V] {
+	return &LinkedHashMap[K, V]{
+		hash: hashmap.NewHashMapWith[K, *list.ListNode[linkedHashMapElem[K, V]]](cap, hasher),
 		data: list.NewList[linkedHashMapElem[K, V]](),
 	}
 }
@@ -43,49 +55,49 @@ func (lhm *LinkedHashMap[K, V]) Set(k K, v V) bool {
 	return true
 }
 func (lhm *LinkedHashMap[K, V]) Get(k K, v ...V) V {
-	listElem := lhm.hash.Get(k)
-	if listElem == nil && len(v) > 0 {
+	node, _ := lhm.hash.Get(k)
+	if node == nil && len(v) > 0 {
 		return v[len(v)-1]
-	} else if listElem == nil {
+	} else if node == nil {
 		var val V
 		return val
 	}
-	return listElem.Value().value
+	return node.Value().value
 }
 func (lhm *LinkedHashMap[K, V]) ContainKey(k K) bool {
 	return lhm.hash.ContainKey(k)
 }
 func (lhm *LinkedHashMap[K, V]) Remove(k K, v ...V) V {
-	listElem := lhm.hash.Remove(k)
-	if listElem == nil && len(v) > 0 {
+	node, _ := lhm.hash.Remove(k)
+	if node == nil && len(v) > 0 {
 		return v[len(v)-1]
-	} else if listElem == nil {
+	} else if node == nil {
 		var val V
 		return val
 	}
-	return lhm.data.RemoveElem(listElem).Value().value
+	return lhm.data.RemoveNode(node).Value().value
 }
 func (lhm *LinkedHashMap[K, V]) Clear() {
 	lhm.hash.Clear()
 	lhm.data.Clear()
 }
 func (lhm *LinkedHashMap[K, V]) Front() (K, V) {
-	frontListElem := lhm.data.Front()
-	if frontListElem == nil {
+	frontNode := lhm.data.Front()
+	if frontNode == nil {
 		var key K
 		var val V
 		return key, val
 	}
-	frontElem := frontListElem.Value()
+	frontElem := frontNode.Value()
 	return frontElem.key, frontElem.value
 }
 func (lhm *LinkedHashMap[K, V]) Back() (K, V) {
-	backListElem := lhm.data.Back()
-	if backListElem == nil {
+	backNode := lhm.data.Back()
+	if backNode == nil {
 		var key K
 		var val V
 		return key, val
 	}
-	backElem := backListElem.Value()
+	backElem := backNode.Value()
 	return backElem.key, backElem.value
 }

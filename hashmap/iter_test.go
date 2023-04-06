@@ -1,36 +1,25 @@
 package hashmap
 
-import "testing"
+import (
+	"fmt"
+	"testing"
+)
 
 func TestHashMap_Iter(t *testing.T) {
-	hm := NewHashMap[int, int]()
+	// TODO: failed
+	hm := NewHashMap[string, int]()
 	for i := 0; i <= 2; i++ {
-		hm.Set(i, i)
+		hm.Set(fmt.Sprintf("%d", i), i)
 	}
+	fmt.Println(hm)
 	for iter := hm.Iterator(); iter != nil; iter.Next() {
-		if iter.Key() != iter.Value() {
-			t.FailNow()
-		}
-		if !iter.HasNext(){
+		fmt.Println(iter.Key(), fmt.Sprintf("%v", iter.Value()))
+		// if iter.Key() != fmt.Sprintf("%v", iter.Value()) {
+		// 	t.FailNow()
+		// }
+		if !iter.HasNext() {
 			break
 		}
 	}
-}
-
-func TestHashMap_Map(t *testing.T) {
-	hm := NewHashMap[int, int]()
-	for i := 0; i <= 2; i++ {
-		hm.Set(i, i)
-	}
-	newHm := HashMapMap(hm, func(k int, v int) (int, int) {
-		return k+1, v+1
-	})
-	for iter := newHm.Iterator(); iter != nil; iter.Next() {
-		if iter.Key() != iter.Value() {
-			t.FailNow()
-		}
-		if !iter.HasNext(){
-			break
-		}
-	}
+	t.Fail()
 }

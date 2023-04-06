@@ -3,14 +3,14 @@ package linkedhashmap
 import "testing"
 
 func TestNewLinkedHashMap(t *testing.T) {
-	hm := NewLinkedHashMapWith[int, int](10)
+	hm := NewLinkedHashMap[int, int]()
 	if hm.Length() != 0 {
 		t.FailNow()
 	}
 }
 
 func TestLinkedHashMap(t *testing.T) {
-	hm := NewLinkedHashMapWith[int, int](10)
+	hm := NewLinkedHashMap[int, int]()
 	for i := 0; i < 10; i++ {
 		hm.Set(i, i)
 	}

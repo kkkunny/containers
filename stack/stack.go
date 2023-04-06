@@ -20,7 +20,7 @@ func (s *Stack[T]) Peek() T {
 	return s.data.Back().Value()
 }
 func (s *Stack[T]) Pop() T {
-	return s.data.RemoveElem(s.data.Back()).Value()
+	return s.data.RemoveNode(s.data.Back()).Value()
 }
 func (s *Stack[T]) Clear() {
 	s.data.Clear()

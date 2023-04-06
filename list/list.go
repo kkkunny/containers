@@ -38,13 +38,13 @@ func NewList[T any]() *List[T] {
 func (l *List[T]) Length() uint {
 	return l.len
 }
-func (l *List[T]) checkElem(e *ListNode[T]) {
+func (l *List[T]) checkNode(e *ListNode[T]) {
 	if e.list != l {
 		panic("the element is not in this list")
 	}
 }
-func (l *List[T]) RemoveElem(e *ListNode[T]) *ListNode[T] {
-	l.checkElem(e)
+func (l *List[T]) RemoveNode(e *ListNode[T]) *ListNode[T] {
+	l.checkNode(e)
 	e.list = nil
 	if e.prev != nil {
 		e.prev.next = e.next
@@ -55,11 +55,11 @@ func (l *List[T]) RemoveElem(e *ListNode[T]) *ListNode[T] {
 	l.len--
 	return e
 }
-func (l *List[T]) MoveToFrontOfElem(elem, target *ListNode[T]) *ListNode[T] {
-	l.checkElem(elem)
-	l.checkElem(target)
+func (l *List[T]) MoveToFrontOfNode(elem, target *ListNode[T]) *ListNode[T] {
+	l.checkNode(elem)
+	l.checkNode(target)
 
-	l.RemoveElem(elem)
+	l.RemoveNode(elem)
 	elem.list = l
 	l.len++
 
@@ -70,11 +70,11 @@ func (l *List[T]) MoveToFrontOfElem(elem, target *ListNode[T]) *ListNode[T] {
 	elem.next = target
 	return elem
 }
-func (l *List[T]) MoveToBackOfElem(elem, target *ListNode[T]) *ListNode[T] {
-	l.checkElem(elem)
-	l.checkElem(target)
+func (l *List[T]) MoveToBackOfNode(elem, target *ListNode[T]) *ListNode[T] {
+	l.checkNode(elem)
+	l.checkNode(target)
 
-	l.RemoveElem(elem)
+	l.RemoveNode(elem)
 	elem.list = l
 	l.len++
 
@@ -86,10 +86,10 @@ func (l *List[T]) MoveToBackOfElem(elem, target *ListNode[T]) *ListNode[T] {
 	return elem
 }
 func (l *List[T]) MoveToFront(e *ListNode[T]) *ListNode[T] {
-	return l.MoveToBackOfElem(e, l.root)
+	return l.MoveToBackOfNode(e, l.root)
 }
 func (l *List[T]) MoveToBack(e *ListNode[T]) *ListNode[T] {
-	return l.MoveToFrontOfElem(e, l.root)
+	return l.MoveToFrontOfNode(e, l.root)
 }
 func (l *List[T]) PushFront(v T) *ListNode[T] {
 	l.len++

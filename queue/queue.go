@@ -20,7 +20,7 @@ func (q *Queue[T]) Peek() T {
 	return q.data.Front().Value()
 }
 func (q *Queue[T]) Pop() T {
-	return q.data.RemoveElem(q.data.Front()).Value()
+	return q.data.RemoveNode(q.data.Front()).Value()
 }
 func (q *Queue[T]) Clear() {
 	q.data.Clear()

@@ -2,7 +2,7 @@ package hashset
 
 import "github.com/kkkunny/containers/hashmap"
 
-type HashSetIter[T comparable] struct {
+type HashSetIter[T any] struct {
 	iter *hashmap.HashMapIter[T, struct{}]
 }
 
@@ -23,8 +23,8 @@ func (i *HashSetIter[V]) Next() {
 	i.iter.Next()
 }
 
-func HashSetMap[FV comparable, TV comparable](hs *HashSet[FV], fn func(v FV) TV) *HashSet[TV] {
-	newHs := NewHashSetWith[TV](hs.Length())
+func HashSetMap[FV comparable, TV comparable](hs *HashSet[FV], fn func(v FV) TV, hasher func(TV) uint64) *HashSet[TV] {
+	newHs := NewHashSetWithHasher(hasher)
 	for iter := hs.Iterator(); iter != nil; iter.Next() {
 		newHs.Add(fn(iter.Value()))
 		if !iter.HasNext() {

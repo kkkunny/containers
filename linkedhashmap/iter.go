@@ -2,7 +2,7 @@ package linkedhashmap
 
 import "github.com/kkkunny/containers/list"
 
-type LinkedHashMapIter[K comparable, V any] struct {
+type LinkedHashMapIter[K any, V any] struct {
 	iter *list.ListIter[linkedHashMapElem[K, V]]
 }
 
@@ -36,15 +36,4 @@ func (i *LinkedHashMapIter[K, V]) HasNext() bool {
 }
 func (i *LinkedHashMapIter[K, V]) Next() {
 	i.iter.Next()
-}
-
-func LinkedHashMapMap[FK comparable, FV any, TK comparable, TV any](lhm *LinkedHashMap[FK, FV], fn func(k FK, v FV) (TK, TV)) *LinkedHashMap[TK, TV] {
-	newLhm := NewLinkedHashMapWith[TK, TV](lhm.Length())
-	for iter := lhm.Begin(); iter != nil; iter.Next() {
-		newLhm.Set(fn(iter.Key(), iter.Value()))
-		if !iter.HasNext() {
-			break
-		}
-	}
-	return newLhm
 }
