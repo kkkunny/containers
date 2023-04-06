@@ -1,6 +1,10 @@
 package dynarray
 
-import "testing"
+import (
+	"math/rand"
+	"testing"
+	"time"
+)
 
 func TestNewDynArray(t *testing.T) {
 	da := NewDynArray[int]()
@@ -89,5 +93,27 @@ func TestDynArray_Remove(t *testing.T) {
 	}
 	if da.Get(0) != 1 && da.Get(1) != 3 {
 		t.FailNow()
+	}
+}
+
+func BenchmarkInsert_DynArray(b *testing.B) {
+	rand.Seed(time.Now().Unix())
+	da := NewDynArray[int]()
+	da.Add(0)
+	da.Add(1)
+	da.Add(2)
+	for i := 0; i < 10000; i++ {
+		da.Insert(1, rand.Intn(1000))
+	}
+}
+
+func BenchmarkInsert_Stdlib(b *testing.B) {
+	rand.Seed(time.Now().Unix())
+	var da []int
+	da = append(da, 0)
+	da = append(da, 1)
+	da = append(da, 2)
+	for i := 0; i < 10000; i++ {
+		da = append(da[:1], append([]int{rand.Intn(1000)}, da[1:]...)...)
 	}
 }

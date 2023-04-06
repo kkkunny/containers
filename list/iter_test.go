@@ -1,6 +1,8 @@
 package list
 
-import "testing"
+import (
+	"testing"
+)
 
 func TestList_Iter(t *testing.T) {
 	l := NewList[int]()
@@ -13,7 +15,7 @@ func TestList_Iter(t *testing.T) {
 			t.FailNow()
 		}
 		i++
-		if !iter.HasNext(){
+		if !iter.HasNext() {
 			break
 		}
 	}
@@ -29,11 +31,11 @@ func TestList_Map(t *testing.T) {
 	})
 	var i int
 	for iter := nl.Begin(); iter != nil; iter.Next() {
-		if i != iter.Value() - 1 {
+		if i != iter.Value()-1 {
 			t.FailNow()
 		}
 		i++
-		if !iter.HasNext(){
+		if !iter.HasNext() {
 			break
 		}
 	}
