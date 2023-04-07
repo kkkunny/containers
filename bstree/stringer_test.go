@@ -2,7 +2,7 @@ package bstree
 
 import "testing"
 
-func TestDynArray_String(t *testing.T) {
+func TestBSTree_String(t *testing.T) {
 	bst := NewBSTree[int]()
 	bst.Push(5)
 	bst.Push(1)
