@@ -23,7 +23,7 @@ func (hs *HashSet[T]) Length() uint {
 	return hs.data.Length()
 }
 func (hs *HashSet[T]) Add(v T) bool {
-	return !hs.data.Set(v, struct{}{})
+	return hs.data.Set(v, struct{}{})
 }
 func (hs *HashSet[T]) Remove(v T) bool {
 	_, ok := hs.data.Remove(v)

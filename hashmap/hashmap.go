@@ -110,12 +110,12 @@ func (hm *HashMap[K, V]) Set(k K, v V) bool {
 	prev, cursor := hm.find(hash, k)
 	if cursor != nil {
 		cursor.value = v
-		return true
+		return false
 	}
 
 	prev.next = newEntry(hash, k, v)
 	hm.len++
-	return false
+	return true
 }
 func (hm *HashMap[K, V]) Get(k K, v ...V) (V, bool) {
 	hash := hm.hash(k)

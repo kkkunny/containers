@@ -53,7 +53,7 @@ func (lhm *LinkedHashMap[K, V]) Set(k K, v V) bool {
 		value: v,
 	}
 	lhm.hash.Set(k, lhm.data.PushBack(elem))
-	return ok
+	return !ok
 }
 func (lhm *LinkedHashMap[K, V]) Get(k K, v ...V) (V, bool) {
 	node, _ := lhm.hash.Get(k)
