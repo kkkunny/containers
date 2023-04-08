@@ -1,4 +1,4 @@
-package bstree
+package avltree
 
 import (
 	"golang.org/x/exp/constraints"
@@ -38,20 +38,17 @@ func (n *node[T]) setRight(o *node[T]) {
 	}
 }
 func (n *node[T]) setFatherThisSon(o *node[T]) bool {
+	if o != nil {
+		o.father = n.father
+	}
 	if n.father == nil {
 		return false
 	}
 	if n.father.left == n {
 		n.father.left = o
-		if o != nil {
-			o.father = n.father
-		}
 		return true
 	} else if n.father.right == n {
 		n.father.right = o
-		if o != nil {
-			o.father = n.father
-		}
 		return true
 	} else {
 		return false
@@ -105,15 +102,39 @@ func (n *node[T]) olderRightNeighbor(order func(T, T) int) *node[T] {
 
 	return father.olderRightNeighbor(order)
 }
+func (n *node[T]) balanceFactor() int {
+	var ld, rd int
+	if n.left != nil {
+		ld = int(n.left.deepth())
+	}
+	if n.right != nil {
+		rd = int(n.right.deepth())
+	}
+	return ld - rd
+}
+func (n *node[T]) leftRotate() *node[T] {
+	root := n.right
+	n.setFatherThisSon(root)
+	n.setRight(root.left)
+	root.setLeft(n)
+	return root
+}
+func (n *node[T]) rightRotate() *node[T] {
+	root := n.left
+	n.setFatherThisSon(root)
+	n.setLeft(root.right)
+	root.setRight(n)
+	return root
+}
 
-type BSTree[T any] struct {
+type AVLTree[T any] struct {
 	order func(T, T) int
 	root  *node[T]
 	len   uint
 }
 
-func NewBSTree[T constraints.Ordered]() *BSTree[T] {
-	return &BSTree[T]{
+func NewAVLTree[T constraints.Ordered]() *AVLTree[T] {
+	return &AVLTree[T]{
 		order: func(l, r T) int {
 			if l < r {
 				return -1
@@ -125,20 +146,20 @@ func NewBSTree[T constraints.Ordered]() *BSTree[T] {
 		},
 	}
 }
-func NewBSTreeWith[T any](order func(T, T) int) *BSTree[T] {
-	return &BSTree[T]{order: order}
+func NewAVLTreeWith[T any](order func(T, T) int) *AVLTree[T] {
+	return &AVLTree[T]{order: order}
 }
 
-func (tree *BSTree[T]) Length() uint {
+func (tree *AVLTree[T]) Length() uint {
 	return tree.len
 }
-func (tree *BSTree[T]) Deepth() uint {
+func (tree *AVLTree[T]) Deepth() uint {
 	if tree.root == nil {
 		return 0
 	}
 	return tree.root.deepth()
 }
-func (tree *BSTree[T]) findNode(cursor *node[T], v T) (*node[T], *node[T]) {
+func (tree *AVLTree[T]) findNode(cursor *node[T], v T) (*node[T], *node[T]) {
 	if res := tree.order(v, cursor.value); res < 0 {
 		if cursor.left == nil {
 			return cursor, nil
@@ -155,7 +176,7 @@ func (tree *BSTree[T]) findNode(cursor *node[T], v T) (*node[T], *node[T]) {
 		}
 	}
 }
-func (tree *BSTree[T]) Push(v T) bool {
+func (tree *AVLTree[T]) Push(v T) bool {
 	newNode := &node[T]{value: v}
 
 	if tree.root == nil {
@@ -176,15 +197,17 @@ func (tree *BSTree[T]) Push(v T) bool {
 		father.setRight(newNode)
 	}
 	tree.len++
+
+	tree.checkBalance(newNode, true)
 	return true
 }
-func (tree *BSTree[T]) Peek() T {
+func (tree *AVLTree[T]) Peek() T {
 	return tree.root.value
 }
-func (tree *BSTree[T]) removeNode(n *node[T]) *node[T] {
+func (tree *AVLTree[T]) removeNode(n *node[T]) *node[T] {
 	if n.left == nil && n.right == nil {
 		if !n.setFatherThisSon(nil) {
-			tree.root = nil
+			tree.root = n
 		}
 	} else if n.left == nil {
 		newNode := tree.removeNode(n.right.leftmost())
@@ -201,9 +224,8 @@ func (tree *BSTree[T]) removeNode(n *node[T]) *node[T] {
 			tree.root = newNode
 		}
 	} else {
-		ld, rd := n.left.deepth(), n.right.deepth()
 		var newNode *node[T]
-		if ld < rd {
+		if balance := n.balanceFactor(); balance <= 0 {
 			newNode = tree.removeNode(n.right.leftmost())
 		} else {
 			newNode = tree.removeNode(n.left.rightmost())
@@ -217,12 +239,15 @@ func (tree *BSTree[T]) removeNode(n *node[T]) *node[T] {
 	}
 
 	tree.len--
+	if n.father != nil {
+		tree.checkBalance(n.father, false)
+	}
 	return n
 }
-func (tree *BSTree[T]) Pop() T {
+func (tree *AVLTree[T]) Pop() T {
 	return tree.removeNode(tree.root).value
 }
-func (tree *BSTree[T]) Remove(v T, defaultValue ...T) (T, bool) {
+func (tree *AVLTree[T]) Remove(v T, defaultValue ...T) (T, bool) {
 	if tree.root == nil && len(defaultValue) > 0 {
 		return defaultValue[len(defaultValue)-1], false
 	} else if tree.root == nil {
@@ -239,7 +264,7 @@ func (tree *BSTree[T]) Remove(v T, defaultValue ...T) (T, bool) {
 	}
 	return tree.removeNode(node).value, true
 }
-func (tree *BSTree[T]) Contain(v T) bool {
+func (tree *AVLTree[T]) Contain(v T) bool {
 	if tree.root == nil {
 		return false
 	}
@@ -247,11 +272,11 @@ func (tree *BSTree[T]) Contain(v T) bool {
 	_, node := tree.findNode(tree.root, v)
 	return node != nil
 }
-func (tree *BSTree[T]) Clear() {
+func (tree *AVLTree[T]) Clear() {
 	tree.root = nil
 	tree.len = 0
 }
-func (tree *BSTree[T]) Get(v T, defaultValue ...T) (T, bool) {
+func (tree *AVLTree[T]) Get(v T, defaultValue ...T) (T, bool) {
 	if tree.root == nil && len(defaultValue) > 0 {
 		return defaultValue[len(defaultValue)-1], false
 	} else if tree.root == nil {
@@ -267,4 +292,33 @@ func (tree *BSTree[T]) Get(v T, defaultValue ...T) (T, bool) {
 		return tmp, false
 	}
 	return node.value, true
+}
+func (tree *AVLTree[T]) checkBalance(cursor *node[T], onlyOne bool) {
+	change := true
+	if balence := cursor.balanceFactor(); balence < -1 {
+		if cursor.right.right != nil {
+			cursor = cursor.leftRotate()
+		} else if cursor.right.left != nil {
+			cursor.left.leftRotate()
+			cursor = cursor.rightRotate()
+		} else {
+			panic("unreachable")
+		}
+	} else if balence > 1 {
+		if cursor.left.left != nil {
+			cursor = cursor.rightRotate()
+		} else if cursor.left.right != nil {
+			cursor.right.rightRotate()
+			cursor = cursor.leftRotate()
+		} else {
+			panic("unreachable")
+		}
+	} else {
+		change = false
+	}
+	if cursor.father == nil {
+		tree.root = cursor
+	} else if !onlyOne || !change {
+		tree.checkBalance(cursor.father, change)
+	}
 }

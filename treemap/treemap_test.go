@@ -1,7 +1,9 @@
 package treemap
 
 import (
+	"math/rand"
 	"testing"
+	"time"
 )
 
 func TestNewTreeMap(t *testing.T) {
@@ -33,5 +35,27 @@ func TestTreeMap(t *testing.T) {
 	}
 	if !tm.ContainKey(1) {
 		t.FailNow()
+	}
+}
+
+func BenchmarkMix_TreeMap(b *testing.B) {
+	rand.Seed(time.Now().Unix())
+	m := NewTreeMap[int, int]()
+	for i := 1; i <= 1000; i++ {
+		m.Set(i, i)
+		for j := 0; j < 10; j++ {
+			_, _ = m.Get(rand.Intn(i))
+		}
+	}
+}
+
+func BenchmarkMix_Stdlib(b *testing.B) {
+	rand.Seed(time.Now().Unix())
+	hm := make(map[int]int)
+	for i := 1; i <= 1000; i++ {
+		hm[i] = i
+		for j := 0; j < 10; j++ {
+			_ = hm[rand.Intn(i)]
+		}
 	}
 }

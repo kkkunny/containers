@@ -1,9 +1,9 @@
-package bstree
+package avltree
 
 import "testing"
 
-func TestBSTree_String(t *testing.T) {
-	tree := NewBSTree[int]()
+func TestAVLTree_String(t *testing.T) {
+	tree := NewAVLTree[int]()
 	tree.Push(5)
 	tree.Push(1)
 	tree.Push(7)

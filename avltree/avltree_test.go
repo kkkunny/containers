@@ -1,18 +1,18 @@
-package bstree
+package avltree
 
 import (
 	"testing"
 )
 
-func TestNewBSTree(t *testing.T) {
-	tree := NewBSTree[int]()
+func TestNewAVLTree(t *testing.T) {
+	tree := NewAVLTree[int]()
 	if tree.Length() != 0 || tree.Deepth() != 0 {
 		t.FailNow()
 	}
 }
 
-func TestBSTree(t *testing.T) {
-	tree := NewBSTree[int]()
+func TestAVLTree(t *testing.T) {
+	tree := NewAVLTree[int]()
 	for i := 0; i < 15; i++ {
 		tree.Push(i)
 	}

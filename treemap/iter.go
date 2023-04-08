@@ -1,9 +1,11 @@
 package treemap
 
-import "github.com/kkkunny/containers/bstree"
+import (
+	"github.com/kkkunny/containers/avltree"
+)
 
 type TreeMapIter[K, V any] struct {
-	iter *bstree.BSTreeIter[entry[K, V]]
+	iter *avltree.AVLTreeIter[entry[K, V]]
 }
 
 func (m *TreeMap[K, V]) Iterator() *TreeMapIter[K, V] {
