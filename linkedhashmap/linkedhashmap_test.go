@@ -1,6 +1,12 @@
 package linkedhashmap
 
-import "testing"
+import (
+	"math/rand"
+	"testing"
+	"time"
+
+	"github.com/kkkunny/containers/hashmap"
+)
 
 func TestNewLinkedHashMap(t *testing.T) {
 	hm := NewLinkedHashMap[int, int]()
@@ -28,5 +34,27 @@ func TestLinkedHashMap(t *testing.T) {
 	}
 	if _, v := hm.Back(); v != 9 {
 		t.FailNow()
+	}
+}
+
+func BenchmarkMix_HashMap(b *testing.B) {
+	rand.Seed(time.Now().Unix())
+	hm := NewLinkedHashMapWithHasher[int, int](hashmap.HashSignedIntFunc[int])
+	for i := 1; i <= 1000; i++ {
+		hm.Set(i, i)
+		for j := 0; j < 10; j++ {
+			_, _ = hm.Get(rand.Intn(i))
+		}
+	}
+}
+
+func BenchmarkMix_Stdlib(b *testing.B) {
+	rand.Seed(time.Now().Unix())
+	hm := hashmap.NewHashMapWithHasher[int, int](hashmap.HashSignedIntFunc[int])
+	for i := 1; i <= 1000; i++ {
+		hm.Set(i, i)
+		for j := 0; j < 10; j++ {
+			_, _ = hm.Get(rand.Intn(i))
+		}
 	}
 }
