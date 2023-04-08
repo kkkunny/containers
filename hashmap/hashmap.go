@@ -1,10 +1,7 @@
 package hashmap
 
 import (
-	"hash/fnv"
 	"math/rand"
-	"reflect"
-	"unsafe"
 )
 
 const (
@@ -37,17 +34,7 @@ func NewHashMap[K comparable, V any]() *HashMap[K, V] {
 	return NewHashMapWithCapacity[K, V](defaultInitCapacity)
 }
 func NewHashMapWithCapacity[K comparable, V any](cap uint) *HashMap[K, V] {
-	hasher := func(k K) uint64 {
-		h := fnv.New64a()
-		size := reflect.TypeOf(k).Size()
-		ptr := uintptr(unsafe.Pointer(&k))
-		for i := uintptr(0); i < size; i++ {
-			b := *(*byte)(unsafe.Pointer(ptr + i))
-			h.Write([]byte{b})
-		}
-		return h.Sum64()
-	}
-	return NewHashMapWith[K, V](cap, hasher)
+	return NewHashMapWith[K, V](cap, HashDefaultFunc[K])
 }
 func NewHashMapWithHasher[K, V any](hasher func(K) uint64) *HashMap[K, V] {
 	return NewHashMapWith[K, V](defaultInitCapacity, hasher)
@@ -171,9 +158,11 @@ func (hm *HashMap[K, V]) Keys() []K {
 			i++
 		}
 	}
-	rand.Shuffle(len(keys), func(i, j int) {
-		keys[i], keys[j] = keys[j], keys[i]
-	})
+	rand.Shuffle(
+		len(keys), func(i, j int) {
+			keys[i], keys[j] = keys[j], keys[i]
+		},
+	)
 
 	return keys
 }
@@ -190,9 +179,11 @@ func (hm *HashMap[K, V]) Values() []V {
 			i++
 		}
 	}
-	rand.Shuffle(len(vals), func(i, j int) {
-		vals[i], vals[j] = vals[j], vals[i]
-	})
+	rand.Shuffle(
+		len(vals), func(i, j int) {
+			vals[i], vals[j] = vals[j], vals[i]
+		},
+	)
 
 	return vals
 }

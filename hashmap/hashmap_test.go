@@ -4,18 +4,17 @@ import (
 	"math/rand"
 	"testing"
 	"time"
-	"unsafe"
 )
 
 func TestNewHashMap(t *testing.T) {
-	hm := NewHashMap[string, int]()
+	hm := NewHashMapWithHasher[int, int](HashSignedIntFunc[int])
 	if hm.Length() != 0 {
 		t.FailNow()
 	}
 }
 
 func TestHashMap(t *testing.T) {
-	hm := NewHashMap[int, int]()
+	hm := NewHashMapWithHasher[int, int](HashSignedIntFunc[int])
 	for i := 0; i < 15; i++ {
 		hm.Set(i, i)
 	}
@@ -40,9 +39,7 @@ func TestHashMap(t *testing.T) {
 }
 
 func BenchmarkAdd_HashMap(b *testing.B) {
-	hm := NewHashMapWithHasher[int, int](func(i int) uint64 {
-		return uint64(*(*uint)(unsafe.Pointer(&i)))
-	})
+	hm := NewHashMapWithHasher[int, int](HashSignedIntFunc[int])
 	for i := 0; i < 100000; i++ {
 		hm.Set(i, i)
 	}
@@ -57,9 +54,7 @@ func BenchmarkAdd_Stdlib(b *testing.B) {
 
 func BenchmarkGet_HashMap(b *testing.B) {
 	rand.Seed(time.Now().Unix())
-	hm := NewHashMapWithHasher[int, int](func(i int) uint64 {
-		return uint64(*(*uint)(unsafe.Pointer(&i)))
-	})
+	hm := NewHashMapWithHasher[int, int](HashSignedIntFunc[int])
 	for i := 0; i < 100; i++ {
 		hm.Set(i, i)
 	}
@@ -81,9 +76,7 @@ func BenchmarkGet_Stdlib(b *testing.B) {
 
 func BenchmarkMix_HashMap(b *testing.B) {
 	rand.Seed(time.Now().Unix())
-	hm := NewHashMapWithHasher[int, int](func(i int) uint64 {
-		return uint64(*(*uint)(unsafe.Pointer(&i)))
-	})
+	hm := NewHashMapWithHasher[int, int](HashSignedIntFunc[int])
 	for i := 1; i <= 1000; i++ {
 		hm.Set(i, i)
 		for j := 0; j < 10; j++ {
