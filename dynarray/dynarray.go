@@ -52,8 +52,9 @@ func (da *DynArray[T]) Slice(begin, end uint) *DynArray[T] {
 }
 func (da *DynArray[T]) Set(i uint, v T) T {
 	da.checkIndex(i)
+	pv := da.data[i]
 	da.data[i] = v
-	return v
+	return pv
 }
 func (da *DynArray[T]) Remove(i uint) T {
 	da.checkIndex(i)
@@ -71,6 +72,6 @@ func (da *DynArray[T]) Remove(i uint) T {
 
 	return v
 }
-func (da *DynArray[T]) Clear(){
+func (da *DynArray[T]) Clear() {
 	da.data = make([]T, 0, 0)
 }
